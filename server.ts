@@ -23,7 +23,7 @@ async function initDb() {
         id SERIAL PRIMARY KEY,
         numero_secreto VARCHAR(4) NOT NULL,
         fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        terminada BOOLEAN DEFAULT FALSE,
+        finalizada BOOLEAN DEFAULT FALSE,
         usuario_id INT REFERENCES usuarios(id)
       );
       CREATE TABLE IF NOT EXISTS intentos (
@@ -106,7 +106,7 @@ async function startServer() {
     try {
         const secret = generateSecret();
         const result = await pool.query(
-            "INSERT INTO partidas (numero_secreto, usuario_id) VALUES ($1, $2) RETURNING id, fecha, terminada, usuario_id",
+            "INSERT INTO partidas (numero_secreto, usuario_id) VALUES ($1, $2) RETURNING id, fecha, finalizada, usuario_id",
             [secret, usuarioId]
         );
         res.json({ ...result.rows[0], intentos: [] });
@@ -127,7 +127,7 @@ async function startServer() {
       if (gameResult.rows.length === 0) return res.status(404).json({ error: "Partida no encontrada" });
       
       const game = gameResult.rows[0];
-      if (game.terminada) return res.status(400).json({ error: "Esta partida ya ha terminado" });
+      if (game.finalizada) return res.status(400).json({ error: "Esta partida ya ha terminado" });
 
       const { picas, fijas } = calculateResult(game.numero_secreto, numero);
       
@@ -138,7 +138,7 @@ async function startServer() {
       );
 
       if (fijas === 4) {
-        await pool.query("UPDATE partidas SET terminada = TRUE WHERE id = $1", [gameId]);
+        await pool.query("UPDATE partidas SET finalizada = TRUE WHERE id = $1", [gameId]);
         await pool.query("UPDATE usuarios SET victorias = victorias + 1 WHERE id = $1", [game.usuario_id]);
       }
       await pool.query("COMMIT");
@@ -154,7 +154,7 @@ async function startServer() {
   app.get("/partida/:id", async (req, res) => {
     const gameId = parseInt(req.params.id);
     try {
-      const gameResult = await pool.query("SELECT id, fecha, terminada, usuario_id FROM partidas WHERE id = $1", [gameId]);
+      const gameResult = await pool.query("SELECT id, fecha, finalizada, usuario_id FROM partidas WHERE id = $1", [gameId]);
       if (gameResult.rows.length === 0) return res.status(404).json({ error: "Partida no encontrada" });
       
       const intentosResult = await pool.query("SELECT * FROM intentos WHERE partida_id = $1", [gameId]);

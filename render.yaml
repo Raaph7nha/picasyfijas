@@ -9,7 +9,7 @@ services:
   - type: web
     name: picas-fijas-backend
     env: java
-    buildCommand: mvn clean install -DskipTests
+    buildCommand: ./mvnw clean install -DskipTests
     startCommand: java -jar target/picas-fijas-0.0.1-SNAPSHOT.jar
     envVars:
       - key: SPRING_DATASOURCE_URL

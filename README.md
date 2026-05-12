@@ -37,7 +37,7 @@ Crea una base de datos llamada `picas_fijas` y ejecuta el script en `database/da
 ```bash
 cd backend
 # Configura tus credenciales en src/main/resources/application.properties
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 ### 4. Ejecución del Frontend
