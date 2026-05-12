@@ -4,28 +4,19 @@ FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /app
 
-# Copiar Maven Wrapper y configuración
+# Copiar todo el proyecto
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+COPY . .
 
-# Dar permisos de ejecución al wrapper
+# Dar permisos al Maven Wrapper
 
 RUN chmod +x mvnw
 
-# Descargar dependencias
-
-RUN ./mvnw dependency:go-offline
-
-# Copiar código fuente
-
-COPY src ./src
-
-# Compilar proyecto
+# Compilar aplicación
 
 RUN ./mvnw clean package -DskipTests
 
-# Etapa final
+# Imagen final
 
 FROM eclipse-temurin:17-jre-alpine
 
@@ -33,15 +24,11 @@ WORKDIR /app
 
 # Copiar el JAR generado
 
-COPY --from=build /app/target/picas-fijas-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
-# Exponer puerto
+# Puerto usado por Render
 
 EXPOSE 8080
-
-# Variable de entorno para Render
-
-ENV PORT=8080
 
 # Ejecutar aplicación
 
