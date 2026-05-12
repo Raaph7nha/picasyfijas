@@ -1,20 +1,16 @@
 # Etapa de construcción
 
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copiar todo el proyecto
+# Copiar archivos
 
 COPY . .
 
-# Dar permisos al Maven Wrapper
+# Compilar proyecto
 
-RUN chmod +x mvnw
-
-# Compilar aplicación
-
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Imagen final
 
@@ -26,10 +22,11 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
 
-# Puerto usado por Render
+# Puerto para Render
 
 EXPOSE 8080
 
 # Ejecutar aplicación
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
