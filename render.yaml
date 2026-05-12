@@ -5,12 +5,11 @@ services:
     databaseName: picas_fijas
     user: rafael
 
-  # Backend (Spring Boot)
+  # Backend (Spring Boot con Docker)
   - type: web
     name: picas-fijas-backend
-    env: java
-    buildCommand: ./mvnw clean install -DskipTests
-    startCommand: java -jar target/picas-fijas-0.0.1-SNAPSHOT.jar
+    env: docker
+    rootDir: backend
     envVars:
       - key: SPRING_DATASOURCE_URL
         fromDatabase:

@@ -51,17 +51,23 @@ npm run dev
 
 ---
 
-## 🌎 Despliegue en Render (Sin Docker)
+## 🌎 Despliegue en Render (Con Docker)
 
-Este proyecto está configurado para desplegarse mediante el archivo `render.yaml`.
+Este proyecto está configurado para desplegarse mediante el archivo `render.yaml` usando **Docker** para el backend.
 
 1. **GitHub:** Sube este código a un repositorio privado o público en GitHub.
 2. **Render:** En el dashboard de Render, crea un nuevo **"Blueprint Instance"**.
 3. **Conexión:** Render detectará automáticamente el archivo `render.yaml` y creará 3 servicios:
    - **PostgreSQL:** Base de datos gestionada.
-   - **Backend:** Servicio web de Java que se conecta automáticamente a la DB.
+   - **Backend:** Servicio web en Docker que se conecta automáticamente a la DB.
    - **Frontend:** Sitio estático rápido.
 4. **Variables:** Asegúrate de que el `VITE_API_URL` en el servicio frontend apunte a la URL de tu backend de Render.
+
+### Ejecución con Docker (Opcional)
+Si prefieres usar Docker localmente para el backend:
+1. Ir a `backend/`.
+2. Ejecutar: `docker build -t picas-fijas-backend .`.
+3. Ejecutar: `docker run -p 8080:8080 --env-file .env picas-fijas-backend`.
 
 ## 🔑 Variables de Entorno del Frontend
 Crea un archivo `.env` en la carpeta `frontend/`:
